@@ -109,7 +109,7 @@ def delete_alumno(id):
             return jsonify({"error": "ID no encontrado"}), 404
     
         alumnos = [alumno for alumno in alumnos if alumno.id != id]
-        return 'Eliminación exitosa', 204
+        return 'Eliminación exitosa', 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -208,7 +208,7 @@ def delete_profesor(id):
             return jsonify({"error": "ID no encontrado"}), 404
     
         profesores = [profesor for profesor in profesores if profesor.id != id]
-        return 'Eliminación exitosa', 204
+        return 'Eliminación exitosa', 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
