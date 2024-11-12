@@ -1,5 +1,17 @@
 class Alumno : 
     def __init__ (self, id, nombres, apellidos, matricula, promedio): 
+        #test on format
+        if not isinstance(id, int):
+            raise ValueError("ID debe ser un int")
+        if not isinstance(nombres, str):
+            raise ValueError("Nombres debe ser un str")
+        if not isinstance(apellidos, str):
+            raise ValueError("Apellidos debe ser un str")
+        if not isinstance(matricula, str) or matricula[O]!='A':
+            raise ValueError("Número de Empleado debe ser ser un str que empieza con A")
+        if not isinstance(promedio, (int, float)) or promedio < 0 or promedio > 100:
+            raise ValueError("Horas de Clase debe ser un número entre 0 y 100")
+        
         self.id = id
         self.nombres = nombres
         self.apellidos = apellidos
