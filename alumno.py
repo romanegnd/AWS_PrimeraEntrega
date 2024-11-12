@@ -7,7 +7,7 @@ class Alumno :
             raise ValueError("Nombres debe ser un str")
         if not isinstance(apellidos, str):
             raise ValueError("Apellidos debe ser un str")
-        if not isinstance(matricula, str) or matricula[O]!='A':
+        if not isinstance(matricula, str):
             raise ValueError("Número de Empleado debe ser ser un str que empieza con A")
         if not isinstance(promedio, (int, float)) or promedio < 0 or promedio > 100:
             raise ValueError("Horas de Clase debe ser un número entre 0 y 100")
