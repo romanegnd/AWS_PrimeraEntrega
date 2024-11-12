@@ -51,10 +51,13 @@ def update_alumno(id):
             return jsonify({"error": "Apellidos invalidos"}), 400
         if 'promedio' in data and (not isinstance(data['promedio'], (int, float)) or data['promedio'] < 0 or data['promedio'] > 10):
             return jsonify({"error": "promedio invalido"}), 400
+        if 'matricula' in data and (not data['matricula'] or not isinstance(data['matricula'], str)):
+            return jsonify({"error": "matricula invalida"}), 400
         
         alumno.nombres = data.get('nombres', alumno.nombres)
         alumno.apellidos = data.get('apellidos', alumno.apellidos)
         alumno.promedio = data.get('promedio', alumno.promedio)
+        alumno.matricula = data.get('matricula', alumno.matricula)
         return jsonify(alumno.to_dict()), 200
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
