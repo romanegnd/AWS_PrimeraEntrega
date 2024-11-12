@@ -5,19 +5,7 @@ from profesor import Profesor
 
 app = Flask(__name__)
 
-"""
-alumnos=[
-    Alumno(1, "Manon", "Georges", "A001", 90), 
-    Alumno(2, "Teddy", "Gesbert", "A002", 88.7), 
-    Alumno(3, "Theo", "Buan", "A003", 8.4)
-]
 
-profesores = [
-    Profesor(1, "E001", 'Juan', "Gomez", 40), 
-    Profesor(2, "E002", "Jesus", "Hidalgo", 20), 
-    Profesor(3, "E003", "Lucia", "Alvarez", 15)
-]
-"""
 alumnos = []
 profesores = []
 
@@ -40,34 +28,30 @@ def get_alumno_by_id(id):
 # POST /alumnos
 @app.route('/alumnos', methods=['POST'])
 def add_alumno():
+    data = request.get_json()
     try:
-        data = request.get_json()
-        if not 'id' in data or not 'nombres' in data or not 'apellidos' in data or not 'matricula' in data or not 'promedio' in data : 
-            return jsonify('Los campos id, nombres, apellidos, matricula et promedio deben ser completos'), 400
-
         nuevo_alumno = Alumno(data['id'], data['nombres'], data['apellidos'], data['matricula'], data["promedio"])
         alumnos.append(nuevo_alumno)
         return jsonify(nuevo_alumno.to_dict()), 201
     except (KeyError, ValueError) as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": str(e)}), 400
 
 # PUT /alumnos/{id}
 @app.route('/alumnos/<int:id>', methods=['PUT'])
 def update_alumno(id):
+    data = request.get_json() # JSON of the request
+    alumno = next((alumno for alumno in alumnos if alumno.id == id), None)
+    if alumno is None:
+        return jsonify({'error' : 'ID no encontrado'}), 404
     try: 
-        alumno = next((alumno for alumno in alumnos if alumno.id == id), None)
-        if alumno is None:
-            return jsonify({'error' : 'ID no encontrado'}), 404
-
-        data = request.get_json() # JSON of the request
-
         #tests
-        if 'nombres' in data and not isinstance(data.get('nombres'), str):
-            return jsonify({"error": "nombres must be a string"}), 400
-        if 'apellidos' in data and not isinstance(data.get('apellidos'), str):
-            return jsonify({"error": "apellidos must be a string"}), 400
-        if 'promedio' in data and not isinstance(data.get('promedio'), float) or not (0.0 <= data.get('promedio') <= 100.0):
-            return jsonify({"error": "promedio must be a float between 0.0 and 100.0"}), 400
+        if 'nombres' in data and (not data['nombres'] or not isinstance(data['nombres'], str)):
+            return jsonify({"error": "Nombres invalidos"}), 400
+        if 'apellidos' in data and (not data['apellidos'] or not isinstance(data['apellidos'], str)):
+            return jsonify({"error": "Apellidos invalidos"}), 400
+        if 'promedio' in data and (not isinstance(data['promedio'], (int, float)) or data['promedio'] < 0 or data['promedio'] > 10):
+            return jsonify({"error": "promedio invalido"}), 400
+        
         alumno.nombres = data.get('nombres', alumno.nombres)
         alumno.apellidos = data.get('apellidos', alumno.apellidos)
         alumno.promedio = data.get('promedio', alumno.promedio)
@@ -83,9 +67,8 @@ def delete_alumno(id):
     alumno = next((alumno for alumno in alumnos if alumno.id == id), None)
     if alumno is None:
         return jsonify({"error": "ID no encontrado"}), 404
-    
     alumnos = [alumno for alumno in alumnos if alumno.id != id]
-    return jsonify({'message': 'Eliminación exitosa'}) , 200
+    return jsonify({'message': 'Eliminacion exitosa'}) , 200
 
 
 #______________________________PROFESORES
@@ -105,37 +88,32 @@ def get_profesor_by_id(id):
 # POST /profesores
 @app.route('/profesores', methods=['POST'])
 def add_profesor():
+    data = request.get_json()
     try:
-        data = request.get_json()
-        if not 'id' in data or not 'numeroEmpleado' in data or not 'nombres' in data or not 'apellidos' in data or not 'horasClase' in data : 
-            return jsonify('Los campos id, numeroEmpleado, nombres, apellidos y horasClase deben ser completos'), 400
-        
         nuevo_profesor = Profesor(data['id'], data['numeroEmpleado'], data['nombres'], data['apellidos'], data['horasClase'])
         profesores.append(nuevo_profesor)
         return jsonify(nuevo_profesor.to_dict()), 201
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    except (KeyError, ValueError) as e:
+        return jsonify({'error': str(e)}), 400
 
 # PUT /profesores/{id}
 @app.route('/profesores/<int:id>', methods=['PUT'])
 def update_profesor(id):
+    data = request.get_json()
+    profesor = next((profesor for profesor in profesores if profesor.id == id), None)
+    if profesor is None:
+        return jsonify({'error' : 'ID no encontrado'}), 404 
     try:
-        profesor = next((profesor for profesor in profesores if profesor.id == id), None)
-        if profesor is None:
-            return jsonify({'error' : 'ID no encontrado'}), 404 
-
-        data = request.get_json()
-
-        if 'nombres' in data and not isinstance(data['nombres'], str):
-            return jsonify({"error": "nombres must be a string"}), 400
-        if 'apellidos' in data and not isinstance(data['apellidos'], str):
-            return jsonify({"error": "apellidos must be a string"}), 400
-        if 'horasClase' in data and not isinstance(data['horasClase'], (int, float)) or data['horasClase']<0 :  #peut etre un float ?????
-            return jsonify({"error": "horasClase must be an integer"}), 400
+        if 'nombres' in data and (not data['nombres'] or not isinstance(data['nombres'], str)):
+            return jsonify({"error": "nombres invalidos"}), 400
+        if 'apellidos' in data and (not data['apellidos'] or not isinstance(data['apellidos'], str)):
+            return jsonify({"error": "apellidos invalidos"}), 400
+        if 'horasClase' in data and (not isinstance(data['horasClase'], (int, float)) or data['horasClase'] < 0) : 
+            return jsonify({"error": "horasClase invalidas"}), 400
         
         profesor.nombres = data.get('nombres', profesor.nombres)
         profesor.apellidos = data.get('apellidos', profesor.apellidos)
-        profesor.horasClase = data.get('promedio', profesor.horasClase)
+        profesor.horasClase = data.get('horasClase', profesor.horasClase)
         return jsonify(profesor.to_dict()), 200
 
     except ValueError as e:
@@ -151,5 +129,8 @@ def delete_profesor(id):
         return jsonify({"error": "ID no encontrado"}), 404
     
     profesores = [profesor for profesor in profesores if profesor.id != id]
-    return jsonify({'message': 'Eliminación exitosa'}) , 200
-    
+    return jsonify({'message': 'Eliminacion exitosa'}) , 200
+
+
+if __name__ == '__main__':
+    app.run(debug=True)

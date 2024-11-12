@@ -4,11 +4,11 @@ class Profesor :
         #test on format
         if not isinstance(id, int):
             raise ValueError("ID debe ser un int")
-        if not isinstance(nombres, str):
+        if not nombres or not isinstance(nombres, str):
             raise ValueError("Nombres debe ser un str")
-        if not isinstance(apellidos, str):
+        if not apellidos or not isinstance(apellidos, str):
             raise ValueError("Apellidos debe ser un str")
-        if not isinstance(numeroEmpleado, int):
+        if not numeroEmpleado or not isinstance(numeroEmpleado, int):
             raise ValueError("Número de Empleado debe ser ser un int")
         if not isinstance(horasClase, (int, float)) or horasClase < 0:
             raise ValueError("Horas de Clase debe ser un número positivo")
@@ -29,19 +29,6 @@ class Profesor :
             "apellidos": self.apellidos,
             "horasClase": self.horasClase
         }
-
-    def set_numeroEmpleado(self, nuevo_numeroEmpleado) : 
-        self.numeroEmpleado = nuevo_numeroEmpleado
-
-    def set_nombres(self, nuevos_nombres) : 
-        self.nombres = nuevos_nombres
-    
-    def set_apellidos(self, nuevos_apellidos) : 
-        self.apellidos = nuevos_apellidos
-
-    def set_horasClase(self, nuevas_horasClase) : 
-        self.horasClase = nuevas_horasClase
-    
 
 
 
