@@ -103,11 +103,11 @@ def update_alumno(id):
 @app.route('/alumnos/<int:id>', methods=['DELETE'])
 def delete_alumno(id):
     try:
+        global alumnos
         alumno = next((alumno for alumno in alumnos if alumno.id == id), None)
         if alumno is None:
             return jsonify({"error": "ID no encontrado"}), 404
-        
-        global alumnos
+    
         alumnos = [alumno for alumno in alumnos if alumno.id != id]
         return 'Eliminación exitosa', 204
     except Exception as e:
@@ -202,12 +202,13 @@ def update_profesor(id):
 @app.route('/profesores/<int:id>', methods=['DELETE'])
 def delete_profesor(id):
     try:
+        global profesores
         profesor = next((profesor for profesor in profesores if profesor.id == id), None)
         if profesor is None:
             return jsonify({"error": "ID no encontrado"}), 404
-        
-        global profesores
+    
         profesores = [profesor for profesor in profesores if profesor.id != id]
         return 'Eliminación exitosa', 204
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
